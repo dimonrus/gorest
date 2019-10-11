@@ -49,7 +49,10 @@ func testErrorMapHandler(w http.ResponseWriter, r *http.Request) {
 	m := map[string]int {
 		porterr.PortErrorSearch: http.StatusNotFound,
 	}
-	Send(w, NewErrorJsonResponse(porterr.New("Some failed message", porterr.PortErrorSearch), m))
+	e := porterr.New("Some failed message", porterr.PortErrorSearch)
+	e = e.PushDetail("Some error", porterr.PortErrorDecoder, "")
+
+	Send(w, NewErrorJsonResponse(e, m))
 }
 
 func TestBadResponse(t *testing.T) {
@@ -80,5 +83,17 @@ func TestNotFoundError(t *testing.T) {
 	resp := w.Result()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatal("wrong status")
+	}
+	res := struct {
+		Error porterr.IError
+	}{
+		Error: &porterr.PortError{},
+	}
+	err := ParseJsonBody(resp.Body, &res)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Error.GetDetails()) != 1 {
+		t.Fatal("wrong error detail length")
 	}
 }
