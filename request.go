@@ -11,7 +11,7 @@ import (
 func ParseJsonBody(r io.ReadCloser, data interface{}) porterr.IError {
 	body, err := ioutil.ReadAll(r)
 	if err != nil {
-		return porterr.New("I/O error. Request body error: "+err.Error(), porterr.PortErrorIO)
+		return porterr.New(porterr.PortErrorIO, "I/O error. Request body error: "+err.Error())
 	}
 	defer func() {
 		err := r.Close()
@@ -21,7 +21,7 @@ func ParseJsonBody(r io.ReadCloser, data interface{}) porterr.IError {
 	}()
 	err = json.Unmarshal(body, data)
 	if err != nil {
-		return porterr.New("Unmarshal error: "+err.Error(), porterr.PortErrorDecoder)
+		return porterr.New(porterr.PortErrorDecoder, "Unmarshal error: "+err.Error())
 	}
 	return nil
 }

@@ -28,9 +28,9 @@ func TestNewOkJsonResponse(t *testing.T) {
 }
 
 func TestNewErrorJsonResponse(t *testing.T) {
-	e := porterr.New("Some failed", porterr.PortErrorSystem)
-	e = e.PushDetail("First error", "SOME_ERROR", "failed")
-	e = e.PushDetail("Second error", "SOME_ERROR", "")
+	e := porterr.New(porterr.PortErrorSystem, "Some failed")
+	e = e.PushDetail("SOME_ERROR", "failed", "First error")
+	e = e.PushDetail("SOME_ERROR", "", "Second error")
 
 	body, err := json.Marshal(e)
 	if err != nil {
@@ -43,14 +43,14 @@ func TestNewErrorJsonResponse(t *testing.T) {
 }
 
 func testErrorHandler(w http.ResponseWriter, r *http.Request) {
-	Send(w, NewErrorJsonResponse(porterr.New("Some failed message", http.StatusBadRequest), nil))
+	Send(w, NewErrorJsonResponse(porterr.New(http.StatusBadRequest, "Some failed message"), nil))
 }
 func testErrorMapHandler(w http.ResponseWriter, r *http.Request) {
 	m := map[string]int {
 		porterr.PortErrorSearch: http.StatusNotFound,
 	}
-	e := porterr.New("Some failed message", porterr.PortErrorSearch)
-	e = e.PushDetail("Some error", porterr.PortErrorDecoder, "")
+	e := porterr.New(porterr.PortErrorSearch, "Some failed message")
+	e = e.PushDetail(porterr.PortErrorDecoder, "", "Some error")
 
 	Send(w, NewErrorJsonResponse(e, m))
 }
