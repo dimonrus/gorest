@@ -43,16 +43,13 @@ func TestNewErrorJsonResponse(t *testing.T) {
 }
 
 func testErrorHandler(w http.ResponseWriter, r *http.Request) {
-	Send(w, NewErrorJsonResponse(porterr.New(http.StatusBadRequest, "Some failed message"), nil))
+	Send(w, NewErrorJsonResponse(porterr.New(porterr.PortErrorRequest, "Some failed message").HTTP(http.StatusBadRequest)))
 }
 func testErrorMapHandler(w http.ResponseWriter, r *http.Request) {
-	m := map[string]int {
-		porterr.PortErrorSearch: http.StatusNotFound,
-	}
-	e := porterr.New(porterr.PortErrorSearch, "Some failed message")
+	e := porterr.New(porterr.PortErrorSearch, "Some failed message").HTTP(http.StatusNotFound)
 	e = e.PushDetail(porterr.PortErrorDecoder, "", "Some error")
 
-	Send(w, NewErrorJsonResponse(e, m))
+	Send(w, NewErrorJsonResponse(e))
 }
 
 func TestBadResponse(t *testing.T) {

@@ -12,18 +12,10 @@ func NewOkJsonResponse(message interface{}, data interface{}, meta interface{}) 
 }
 
 // New Json Response with error
-func NewErrorJsonResponse(e porterr.IError, codeMap HttpCodeMap) *JsonResponse {
+func NewErrorJsonResponse(e porterr.IError) *JsonResponse {
 	httpCode := http.StatusInternalServerError
-	if err, ok := e.(*porterr.PortError); ok {
-		if v, ok := err.Code.(string); ok {
-			if code, ok := codeMap[v]; ok {
-				httpCode = code
-			}
-		} else if v, ok := err.Code.(int); ok {
-			if v >= http.StatusBadRequest && v <= http.StatusNetworkAuthenticationRequired {
-				httpCode = v
-			}
-		}
+	if e.GetHTTP() >= http.StatusBadRequest && e.GetHTTP() <= http.StatusNetworkAuthenticationRequired {
+		httpCode = e.GetHTTP()
 	}
 	return &JsonResponse{Message: e.Error(), HttpCode: httpCode, Error: e}
 }
