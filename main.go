@@ -18,7 +18,7 @@ type JsonResponse struct {
 	// HTTP code
 	HttpCode int `json:"-"`
 	// Message information
-	Message interface{} `json:"message"`
+	Message interface{} `json:"message,omitempty"`
 	// Body
 	Data interface{} `json:"data,omitempty"`
 	// Meta information

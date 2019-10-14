@@ -17,7 +17,7 @@ func NewErrorJsonResponse(e porterr.IError) *JsonResponse {
 	if e.GetHTTP() >= http.StatusBadRequest && e.GetHTTP() <= http.StatusNetworkAuthenticationRequired {
 		httpCode = e.GetHTTP()
 	}
-	return &JsonResponse{Message: e.Error(), HttpCode: httpCode, Error: e}
+	return &JsonResponse{HttpCode: httpCode, Error: e}
 }
 
 // Send response to client
