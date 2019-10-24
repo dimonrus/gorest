@@ -27,8 +27,11 @@ func Send(writer http.ResponseWriter, response *JsonResponse) {
 
 // Sent json into http writer
 func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
-	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(httpCode)
+	if data == nil {
+		return
+	}
+	writer.Header().Set("Content-Type", "application/json")
 	body, err := json.Marshal(data)
 	if err != nil {
 		_, err := writer.Write([]byte("JSON marshal failed: " + err.Error()))
