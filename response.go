@@ -48,7 +48,7 @@ func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 }
 
 // Default response strategy
-func ResponseErrorStrategy(response *http.Response) porterr.IError {
+func ResponseErrorStrategy(response *http.Response) error {
 	var e porterr.IError
 	if response.StatusCode >= http.StatusBadRequest {
 		// Default error message
