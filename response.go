@@ -3,6 +3,7 @@ package gorest
 import (
 	"encoding/json"
 	"github.com/dimonrus/porterr"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -14,7 +15,7 @@ func NewOkJsonResponse(message interface{}, data interface{}, meta interface{}) 
 // New Json Response with error
 func NewErrorJsonResponse(e porterr.IError) *JsonResponse {
 	httpCode := http.StatusInternalServerError
-	if e.GetHTTP() >= http.StatusBadRequest && e.GetHTTP() <= http.StatusNetworkAuthenticationRequired {
+	if e != nil && e.GetHTTP() >= http.StatusBadRequest && e.GetHTTP() <= http.StatusNetworkAuthenticationRequired {
 		httpCode = e.GetHTTP()
 	}
 	return &JsonResponse{HttpCode: httpCode, Error: e}
@@ -44,4 +45,29 @@ func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// Default response strategy
+func ResponseErrorStrategy(response *http.Response) porterr.IError {
+	var e porterr.IError
+	if response.StatusCode >= http.StatusBadRequest {
+		// Default error message
+		message := http.StatusText(response.StatusCode) + ": " + response.Request.URL.Path + " Service: " + response.Request.Host
+		// Init Error
+		e = porterr.New(porterr.PortErrorResponse, message).HTTP(response.StatusCode)
+		// Init response struct
+		result := &JsonResponse{Error: e}
+		// Read response body
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return e.PushDetail(porterr.PortErrorBody, "body", err.Error())
+		}
+		if len(body) != 0 {
+			err = json.Unmarshal(body, result)
+			if err != nil {
+				e = e.PushDetail(porterr.PortErrorBody, "body", err.Error())
+			}
+		}
+	}
+	return e
 }
