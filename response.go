@@ -26,6 +26,16 @@ func Send(writer http.ResponseWriter, response *JsonResponse) {
 	SendJson(writer, response.HttpCode, response)
 }
 
+// SendRawJson send raw JSON
+func SendRawJson(writer http.ResponseWriter, httpCode int, data json.RawMessage) {
+	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+	writer.WriteHeader(httpCode)
+	if data == nil {
+		return
+	}
+	writer.Write(data)
+}
+
 // Sent json into http writer
 func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
