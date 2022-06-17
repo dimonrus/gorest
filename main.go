@@ -10,10 +10,10 @@ type Meta struct {
 	Total int `json:"total,omitempty"`
 }
 
-// Type for http code mapping
+// HttpCodeMap Type for http code mapping
 type HttpCodeMap map[string]int
 
-// Json response struct
+// JsonResponse Json response struct
 type JsonResponse struct {
 	// HTTP code
 	HttpCode int `json:"-"`

@@ -14,20 +14,30 @@ type TestJsonRequest struct {
 }
 
 func TestReadJsonBody(t *testing.T) {
-	n := TestJsonRequest{123}
-	r := &TestJsonRequest{}
-	b, err := json.Marshal(n)
-	if err != nil {
-		t.Fatal(err)
-	}
-	req := httptest.NewRequest("POST", "/no_url", bytes.NewReader(b))
-	e := ParseJsonBody(req.Body, r)
-	if e != nil {
-		t.Fatal(e.Error())
-	}
-	if r.Number != 123 {
-		t.Fatal("incorrect number")
-	}
+	t.Run("normal", func(t *testing.T) {
+		n := TestJsonRequest{123}
+		r := &TestJsonRequest{}
+		b, err := json.Marshal(n)
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequest("POST", "/no_url", bytes.NewReader(b))
+		e := ParseJsonBody(req.Body, r)
+		if e != nil {
+			t.Fatal(e.Error())
+		}
+		if r.Number != 123 {
+			t.Fatal("incorrect number")
+		}
+	})
+	t.Run("empty_body", func(t *testing.T) {
+		r := &TestJsonRequest{}
+		req := httptest.NewRequest("POST", "/no_url", nil)
+		e := ParseJsonBody(req.Body, r)
+		if e != nil {
+			t.Fatal(e.Error())
+		}
+	})
 }
 
 type testResponse struct {

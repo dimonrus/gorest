@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-// New Json Response without error
+// NewOkJsonResponse New Json Response without error
 func NewOkJsonResponse(message interface{}, data interface{}, meta interface{}) *JsonResponse {
 	return &JsonResponse{HttpCode: http.StatusOK, Message: message, Data: data, Meta: meta}
 }
 
-// New Json Response with error
+// NewErrorJsonResponse New Json Response with error
 func NewErrorJsonResponse(e porterr.IError) *JsonResponse {
 	httpCode := http.StatusInternalServerError
 	if e != nil && e.GetHTTP() >= http.StatusBadRequest && e.GetHTTP() <= http.StatusNetworkAuthenticationRequired {
@@ -36,7 +36,7 @@ func SendRawJson(writer http.ResponseWriter, httpCode int, data json.RawMessage)
 	writer.Write(data)
 }
 
-// Sent json into http writer
+// SendJson Sent json into http writer
 func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	writer.WriteHeader(httpCode)
@@ -57,7 +57,7 @@ func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 	}
 }
 
-// Default response strategy
+// ResponseErrorStrategy Default response strategy
 func ResponseErrorStrategy(response *http.Response) error {
 	var e porterr.IError
 	if response.StatusCode >= http.StatusBadRequest {
