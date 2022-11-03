@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/dimonrus/porterr"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -13,7 +12,7 @@ func ParseJsonBody(r io.ReadCloser, data interface{}) porterr.IError {
 	if r == http.NoBody {
 		return nil
 	}
-	body, err := ioutil.ReadAll(r)
+	body, err := io.ReadAll(r)
 	if err != nil {
 		return porterr.New(porterr.PortErrorIO, "I/O error. Request body error: "+err.Error()).HTTP(http.StatusBadRequest)
 	}

@@ -37,7 +37,7 @@ func TestNewErrorJsonResponse(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("%s", body)
-	if fmt.Sprintf("%s", body) != `{"message":"Some failed","code":"PORTABLE_ERROR_SYSTEM","data":[{"message":"First error","code":"SOME_ERROR","name":"failed"},{"message":"Second error","code":"SOME_ERROR"}]}` {
+	if fmt.Sprintf("%s", body) != `{"code":"PORTABLE_ERROR_SYSTEM","message":"Some failed","data":[{"code":"SOME_ERROR","name":"failed","message":"First error"},{"code":"SOME_ERROR","message":"Second error"}]}` {
 		t.Fatal("wrong format")
 	}
 }

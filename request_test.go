@@ -3,7 +3,7 @@ package gorest
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -69,7 +69,7 @@ func TestOkResponse(t *testing.T) {
 	}
 	os := okStruct{}
 	rsp := testResponse{Data: &os}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
